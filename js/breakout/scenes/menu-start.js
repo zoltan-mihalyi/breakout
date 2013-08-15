@@ -1,10 +1,14 @@
 /** The start scene which is derived from the base menu scene. It draws text to the screen and if the user clicks the first game scene is loaded */
-define(['grape', 'scenes/menu'], function (Grape, Menu) {
+define(['grape', 'scenes/menu', 'scenes/Game'], function (Grape, Menu, Game) {
     var verb = Grape.Utils.Environment.mobile ? 'tap' : 'click';
     var MenuStartController = Grape.component('MenuStartController', {
         draw:function () {
-            Grape.Draw.text(108, 250, verb + ' to start');
-            Grape.Draw.text(10, 310, 'during the game: \nuse L/R arrow keys to skip levels');
+            Grape.Draw.text(162, 250, verb + ' to start', {align:'center'});
+            Grape.Draw.text(162, 310, 'during the game: \nuse L/R arrow keys to skip levels', {align:'center'});
+        },
+
+        'keyPress.mouseLeft':function(){
+            Grape.startScene(Game);
         }
     });
 
