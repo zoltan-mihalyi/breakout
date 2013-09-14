@@ -9,7 +9,7 @@ define(['grape', 'scenes/base', 'sprites'], function (Grape, BaseScene, Sprites)
     return Grape.scene(null, BaseScene, {
         instances:[
             {
-                x:95,
+                x:94,
                 y:38,
                 type:Logo
             }

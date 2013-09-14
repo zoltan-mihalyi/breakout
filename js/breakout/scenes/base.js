@@ -3,6 +3,7 @@ define(['grape', 'sprites'], function (Grape, Sprites) {
     return Grape.scene(null, {
         width:324,
         height:484,
+        fps: 30,
         background:Sprites.background
     });
 });

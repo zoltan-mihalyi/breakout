@@ -1,5 +1,5 @@
 define(['grape', 'sprites'], function (Grape, Sprites) {
-    return Grape.component('Paddle', 'Sprite,AutoRendered', {
+    return Grape.component('Paddle', 'Sprite,AutoRendered,Collidable', {
         create:function () {
             this.sprite = Sprites.paddle;
         },

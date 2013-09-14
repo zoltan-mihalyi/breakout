@@ -11,11 +11,10 @@ define(['grape'], function (Grape) {
         numbers:[0, 6, 3, 2, 3]
     });
 
-    console.log(tiles);
-
     return {
         background:Grape.sprite(null, 'sprites/bg_prerendered.png'),
         logo:Grape.sprite(null, 'sprites/logo.png'),
-        paddle:tiles.paddle
+        paddle:tiles.paddle,
+        ball:tiles.ball
     }
 });
