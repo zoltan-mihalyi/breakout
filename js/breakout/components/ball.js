@@ -18,7 +18,5 @@ define(['grape', 'sprites'], function (Grape, Sprites) {
         'collision.Collidable':function (other) {
             this.bounceAgainst(other);
         }
-    },{
-
     });
 });
