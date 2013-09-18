@@ -1,5 +1,5 @@
 /** The game scene*/
-define(['grape', 'scenes/base', 'components/paddle', 'components/ball', 'components/wall', 'components/ground'], function(Grape, Base, Paddle, Ball, Wall, Ground) {
+define(['grape', 'scenes/base', 'components/paddle', 'components/ball', 'components/wall', 'components/brick'], function(Grape, Base, Paddle, Ball, Wall, Brick) {
     var l = 'l', h = 'h', v = 'v', g = 'g', r = 'r', b = 'b', t = 't';
     var bg = [
         [l, h, h, h, h, h, h, h, h, h, h, h, h, h, h, h, h, h, h, r],
@@ -41,6 +41,11 @@ define(['grape', 'scenes/base', 'components/paddle', 'components/ball', 'compone
                 x: 50,
                 y: 208,
                 type: Ball
+            },
+            {
+                x: 64,
+                y: 128,
+                type: Brick
             }
         ],
         init: function() {
