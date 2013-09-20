@@ -29,7 +29,6 @@ define(['grape', 'scenes/base', 'components/paddle', 'components/ball', 'compone
         [t, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, t],
         [b, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, b]
     ];
-
     return Grape.scene(null, Base, {
         instances: [
             {
@@ -41,11 +40,6 @@ define(['grape', 'scenes/base', 'components/paddle', 'components/ball', 'compone
                 x: 50,
                 y: 208,
                 type: Ball
-            },
-            {
-                x: 64,
-                y: 128,
-                type: Brick
             }
         ],
         init: function() {

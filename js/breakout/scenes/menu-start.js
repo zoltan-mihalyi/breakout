@@ -1,5 +1,5 @@
 /** The start scene which is derived from the base menu scene. It draws text to the screen and if the user clicks the first game scene is loaded */
-define(['grape', 'scenes/menu', 'scenes/game'], function (Grape, Menu, Game) {
+define(['grape', 'scenes/menu', 'scenes/levels'], function (Grape, Menu, Levels) {
     var verb = Grape.Utils.Environment.mobile ? 'tap' : 'click';
     var MenuStartController = Grape.component('MenuStartController', {
         draw:function () {
@@ -8,7 +8,7 @@ define(['grape', 'scenes/menu', 'scenes/game'], function (Grape, Menu, Game) {
         },
 
         'keyPress.mouseLeft':function(){
-            Grape.startScene(Game);
+            Grape.startScene(Levels[0]);
         }
     });
 

@@ -1,10 +1,10 @@
 define(['grape'], function(Grape) {
 
     var tiles = Grape.tile(16, 16, 'sprites/tiles.png', {
-        brick1: [0, 0, 5, 2],
-        brick2: [0, 1, 5, 2],
-        brick3: [0, 2, 5, 2],
-        brick4: [0, 3, 5, 2],
+        brick_red: [0, 0, 5, 2],
+        brick_blue: [0, 1, 5, 2],
+        brick_orange: [0, 2, 5, 2],
+        brick_green: [0, 3, 5, 2],
         paddle: [0, 4, 1, 3],
         paddle_small: [0, 5, 1, 2],
         ball: [3, 4, 5],
