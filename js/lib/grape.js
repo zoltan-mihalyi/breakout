@@ -3,7 +3,7 @@
 (function(nodeRequire) {
     var require, define;
     (function() {
-        var defined = {}, waiting = {}, hasOwn = Object.prototype.hasOwnProperty, hasProp = function(obj, prop) {
+        var STRING_TYPE = "[object String]", defined = {}, waiting = {}, hasOwn = Object.prototype.hasOwnProperty, hasProp = function(obj, prop) {
             return hasOwn.call(obj, prop);
         };
         define = function(name, deps, callback) {
@@ -23,9 +23,18 @@
                 defined[name] = w[1].apply({}, args);
             }
         };
-        require = function(dep, callback) {
-            loadTree(dep);
-            callback && callback(defined[dep]);
+        require = function(deps, callback) {
+            var n, i = 0, modules = [], global = function() {
+                return this;
+            }();
+            Object.prototype.toString.call(deps) == STRING_TYPE && (deps = [ deps ]);
+            for (n = deps.length; n > i; ++i) {
+                loadTree(deps[i]);
+                modules[i] = defined[deps[i]];
+            }
+            if (!callback) return defined[deps[0]];
+            callback.apply(global, modules);
+            return void 0;
         };
     })();
     define("../js/grape/dependency", function() {});
@@ -1971,6 +1980,55 @@
         });
     });
     define("std/physical", [ "core/component", "core/playground", "core/system" ], function(component, Playground, System) {
+        function getBounds(instance) {
+            return instance.inherits("Size") ? instance.getBounds() : {
+                left: this.x,
+                right: this.x,
+                top: this.y,
+                bottom: this.y
+            };
+        }
+        function pointDistance(x1, y1, x2, y2) {
+            var xd = x1 - x2, yd = y1 - y2;
+            return Math.sqrt(xd * xd + yd * yd);
+        }
+        function rectanglePointDistance(l, r, t, b, x, y) {
+            var p;
+            p = x >= l ? r >= x ? 1 : 2 : 0;
+            y >= t && (p += b >= y ? 3 : 6);
+            switch (p) {
+              case 0:
+                return pointDistance(x, y, l, t);
+
+              case 1:
+                return t - y;
+
+              case 2:
+                return pointDistance(x, y, r, t);
+
+              case 3:
+                return l - x;
+
+              case 4:
+                return 0;
+
+              case 5:
+                return x - r;
+
+              case 6:
+                return pointDistance(x, y, l, b);
+
+              case 7:
+                return y - b;
+
+              case 8:
+                return pointDistance(x, y, r, b);
+            }
+        }
+        function rectangleDistance(r1, r2) {
+            var halfW = (r2.right - r2.left) / 2, halfH = (r2.bottom - r2.top) / 2;
+            return rectanglePointDistance(r1.left - halfW, r1.right + halfW, r1.top - halfH, r1.bottom + halfH, r2.left + halfW, r2.top + halfW);
+        }
         System.bind("physics", function() {
             Playground.dispatch("physics");
         });
@@ -2034,18 +2092,23 @@
                 this.vspeed = y - this.y;
                 this.setSpeed(speed);
             },
+            approachingTo: function(instance) {
+                var b1 = getBounds(this), newb1 = {
+                    left: b1.left + this.hspeed,
+                    right: b1.right + this.hspeed,
+                    top: b1.top + this.vspeed,
+                    bottom: b1.bottom + this.vspeed
+                }, b2 = getBounds(instance), dist1 = rectangleDistance(b1, b2), dist2 = rectangleDistance(newb1, b2);
+                return dist1 >= dist2;
+            },
             bounceAgainst: function(instance) {
                 var b1, b2;
-                b1 = this.inherits("Size") ? this.getBounds() : {
-                    left: this.x,
-                    right: this.x
-                };
-                b2 = instance.inherits("Size") ? instance.getBounds() : {
-                    left: instance.x,
-                    right: instance.x
-                };
-                var smallerRight = b1.right < b2.right ? b1.right : b2.right, biggerLeft = b1.left > b2.left ? b1.left : b2.left, smallerBottom = b1.bottom < b2.bottom ? b1.bottom : b2.bottom, biggerTop = b1.top > b2.top ? b1.top : b2.top;
-                smallerBottom - biggerTop > smallerRight - biggerLeft ? this.hspeed *= -1 : this.vspeed *= -1;
+                if (this.approachingTo(instance)) {
+                    b1 = getBounds(this);
+                    b2 = getBounds(instance);
+                    var smallerRight = b1.right < b2.right ? b1.right : b2.right, biggerLeft = b1.left > b2.left ? b1.left : b2.left, smallerBottom = b1.bottom < b2.bottom ? b1.bottom : b2.bottom, biggerTop = b1.top > b2.top ? b1.top : b2.top;
+                    smallerBottom - biggerTop > smallerRight - biggerLeft ? this.hspeed *= -1 : this.vspeed *= -1;
+                }
             },
             reverse: function(dir) {
                 switch (dir) {
@@ -2096,7 +2159,7 @@
             },
             getTop: function() {
                 var s = this.getSprite();
-                return this.x - s.originY + s.topBounding;
+                return this.y - s.originY + s.topBounding;
             },
             getWidth: function() {
                 var s = this.getSprite();
@@ -2133,8 +2196,9 @@
             },
             frame: function() {
                 var subimages = this.getSprite().subimages, nextSubimage = this.subimage + this.imageSpeed;
-                if (nextSubimage >= subimages) {
+                if (nextSubimage >= subimages || 0 > nextSubimage) {
                     this.subimage = nextSubimage % subimages;
+                    0 > this.subimage && (this.subimage += subimages);
                     this.dispatch("animationEnd");
                 } else this.subimage = nextSubimage;
             }
